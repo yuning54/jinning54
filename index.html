@@ -504,7 +504,7 @@
         input[type="color"] { width: 48px; height: 38px; border-radius: 12px; cursor: pointer; }
         input[type="range"] { width: 140px; }
         .file-input-label { background: #eef2f6; padding: 6px 14px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; display: inline-block; font-weight: 500; }
-        .bg-preview { margin-top: 10px; max-width: 100%; max-height: 100px; border-radius: 16px; overflow: hidden; }
+        .bg-preview { margin-top: 10px; max-width: 100%; max-height: 100px; overflow: hidden; }
         .bg-preview img { max-width: 100%; max-height: 100px; object-fit: cover; border-radius: 12px; }
         .remove-bg-btn { background: #ffece5; border: none; padding: 5px 14px; border-radius: 24px; font-size: 0.7rem; cursor: pointer; }
         input[type="file"] { display: none; }
@@ -721,15 +721,10 @@
         
         // 获取随机用户消息 - 限定在最近10条以内
         function getRandomUserMessageToQuote() {
-            // 筛选出所有用户发送的纯文本消息（非图片非表情）
             const allUserMsgs = chatMessages.filter(m => m.type === 'user' && !m.isImage && !m.isEmoji && m.content && m.content.trim() !== '');
             if(allUserMsgs.length === 0) return null;
-            
-            // 获取最近10条以内的用户消息（按时间顺序，后面的索引更新）
-            // 由于chatMessages是按时间顺序存储的，取最后10条符合条件的消息
             const recentMsgs = allUserMsgs.slice(-10);
             if(recentMsgs.length === 0) return null;
-            
             const randomMsg = recentMsgs[Math.floor(Math.random() * recentMsgs.length)];
             let quote = randomMsg.content;
             if(quote.length > 70) quote = quote.slice(0,67)+'...';
