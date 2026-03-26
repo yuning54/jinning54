@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>锦时予宁 | 永恒珍藏版</title>
+    <title>锦时予宁 | 永恒珍藏版 · 引用回声</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,6 @@
             align-items: center;
         }
 
-        /* 整体应用容器，固定大小自适应 */
         .chat-app {
             width: 100%;
             height: 100%;
@@ -37,7 +36,6 @@
             overflow: hidden;
         }
 
-        /* 主视图切换 */
         .view {
             flex: 1;
             display: flex;
@@ -169,6 +167,34 @@
             display: flex;
             flex-direction: column;
             max-width: 70%;
+            /* 关键：让内容容器宽度由内部元素决定，但不强制拉伸 */
+            width: fit-content;
+            min-width: 40px;
+        }
+        
+        /* 引用块样式 - 独立于气泡，不参与气泡宽度计算 */
+        .quote-badge {
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.08);
+            border-left: 3px solid #9aaebf;
+            padding: 4px 8px;
+            margin-bottom: 6px;
+            border-radius: 12px;
+            color: #5b6e8c;
+            max-width: 260px;
+            word-break: break-word;
+            white-space: pre-wrap;
+            font-style: normal;
+            display: inline-block;
+            /* 让引用框独立宽度，不强制拉伸父容器 */
+            width: auto;
+        }
+        .user .quote-badge {
+            background: rgba(0,0,0,0.06);
+            border-left-color: #8ba3bc;
+        }
+        .contact .quote-badge {
+            background: rgba(0,0,0,0.05);
         }
         
         .bubble {
@@ -179,6 +205,14 @@
             word-break: break-word;
             white-space: pre-wrap;
             transition: background-color 0.1s, color 0.1s;
+            /* 气泡宽度根据内容自适应，不受引用框影响 */
+            width: fit-content;
+            max-width: 100%;
+        }
+        
+        /* 确保气泡容器本身也是自适应宽度 */
+        .message-content .bubble {
+            display: inline-block;
         }
         
         .bubble-image {
@@ -222,6 +256,15 @@
         
         .user .timestamp {
             text-align: right;
+        }
+        
+        /* 确保消息内容区域对齐正确 */
+        .user .message-content {
+            align-items: flex-end;
+        }
+        
+        .contact .message-content {
+            align-items: flex-start;
         }
 
         .input-area {
@@ -422,7 +465,7 @@
             to { opacity: 1; transform: translateY(0);}
         }
 
-        /* 模态框不变 */
+        /* 模态框 */
         .settings-modal {
             position: fixed;
             top: 0;
@@ -561,7 +604,7 @@
 
 <script>
     (function() {
-        // ========== 原有聊天核心逻辑 ==========
+        // ========== 存储键值 & 默认数据 ==========
         const STORAGE_KEYS = { SETTINGS: "eternal_private_chat_settings", LEXICON: "eternal_private_chat_lexicon", EMOJIS: "eternal_private_chat_emojis", MESSAGES: "eternal_private_chat_messages", BG_IMAGE: "eternal_private_chat_bg" };
         const DEFAULT_LEXICON = ["“生活原本沉闷，但跑起来就有风”","“别急，在变好”","今天的云很好看，我想拍给你看。","听首喜欢的歌吧，我陪你。","随便聊聊，什么都不想也没关系。","风很温柔，你也是。","“记得好好吃饭”","想听你分享一件小事","安心，我一直在这里。"];
         let lexicon = [], emojis = [], chatMessages = [];
@@ -575,21 +618,180 @@
         async function processImageFile(file, maxWidth=600, quality=0.75) { if(!file) return null; try { return await compressImageFromFile(file,maxWidth,quality); } catch(e){ return null; } }
         function persistAll() { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); localStorage.setItem(STORAGE_KEYS.LEXICON, JSON.stringify(lexicon)); localStorage.setItem(STORAGE_KEYS.EMOJIS, JSON.stringify(emojis)); localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(chatMessages)); if(settings.bgImage) localStorage.setItem(STORAGE_KEYS.BG_IMAGE, settings.bgImage); else localStorage.removeItem(STORAGE_KEYS.BG_IMAGE); }
         function loadAll() { try { const savedSets = localStorage.getItem(STORAGE_KEYS.SETTINGS); if(savedSets) Object.assign(settings, JSON.parse(savedSets)); const savedLex = localStorage.getItem(STORAGE_KEYS.LEXICON); if(savedLex && Array.isArray(JSON.parse(savedLex))) lexicon = JSON.parse(savedLex); if(!lexicon.length) lexicon = [...DEFAULT_LEXICON]; const savedEmoji = localStorage.getItem(STORAGE_KEYS.EMOJIS); if(savedEmoji && Array.isArray(JSON.parse(savedEmoji))) emojis = JSON.parse(savedEmoji); const savedMsg = localStorage.getItem(STORAGE_KEYS.MESSAGES); if(savedMsg && Array.isArray(JSON.parse(savedMsg))) chatMessages = JSON.parse(savedMsg); const savedBg = localStorage.getItem(STORAGE_KEYS.BG_IMAGE); if(savedBg && savedBg !== 'null') settings.bgImage = savedBg; if(settings.myBubbleTextColor === undefined) settings.myBubbleTextColor = "#1e2a3e"; if(settings.contactBubbleTextColor === undefined) settings.contactBubbleTextColor = "#1e2a3e"; } catch(e) { lexicon = [...DEFAULT_LEXICON]; } }
+        
         function applyBubbleStyle(bubble, type) { if(bubble.classList.contains('bubble-image') || bubble.classList.contains('bubble-emoji')) return; const bg = type === 'user' ? settings.myBubbleColor : settings.contactBubbleColor; const op = type === 'user' ? settings.myBubbleOpacity : settings.contactBubbleOpacity; const textColor = type === 'user' ? settings.myBubbleTextColor : settings.contactBubbleTextColor; const r=parseInt(bg.slice(1,3),16),g=parseInt(bg.slice(3,5),16),b=parseInt(bg.slice(5,7),16); bubble.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${op})`; bubble.style.color = textColor; }
-        function renderMessageToDOM(msg) { const row = document.createElement('div'); row.className = `message-row ${msg.type}`; const avatar = document.createElement('img'); avatar.className='message-avatar'; avatar.src=msg.avatar||DEFAULT_AVATAR_SVG; const contentDiv=document.createElement('div'); contentDiv.className='message-content'; const bubble=document.createElement('div'); bubble.className='bubble'; if(msg.isImage){ bubble.classList.add('bubble-image'); const img=document.createElement('img'); img.src=msg.content; bubble.appendChild(img); } else if(msg.isEmoji){ bubble.classList.add('bubble-emoji'); const img=document.createElement('img'); img.src=msg.content; bubble.appendChild(img); } else { bubble.innerText=msg.content; applyBubbleStyle(bubble, msg.type); } const timeSpan=document.createElement('div'); timeSpan.className='timestamp'; timeSpan.innerText=msg.time; contentDiv.appendChild(bubble); contentDiv.appendChild(timeSpan); row.appendChild(avatar); row.appendChild(contentDiv); messagesContainer.appendChild(row); }
-        function renderAllMessages() { messagesContainer.innerHTML=''; chatMessages.forEach(m=>renderMessageToDOM(m)); messagesContainer.scrollTop=messagesContainer.scrollHeight; }
-        function addMessage(content,type,isImage=false,isEmoji=false){ const msg={type,content,isImage,isEmoji,time:formatTime(),avatar:type==='user'?currentUserAvatar:currentContactAvatar}; chatMessages.push(msg); persistAll(); renderMessageToDOM(msg); messagesContainer.scrollTop=messagesContainer.scrollHeight; return msg; }
+        
+        // 渲染消息：引用框独立，气泡只包裹文字内容
+        function renderMessageToDOM(msg) { 
+            const row = document.createElement('div'); 
+            row.className = `message-row ${msg.type}`; 
+            const avatar = document.createElement('img'); 
+            avatar.className='message-avatar'; 
+            avatar.src=msg.avatar||DEFAULT_AVATAR_SVG; 
+            const contentDiv=document.createElement('div'); 
+            contentDiv.className='message-content';
+            
+            // 引用框独立添加，不参与气泡宽度
+            if(msg.quoteText && msg.quoteText.trim() !== '') {
+                const quoteDiv = document.createElement('div');
+                quoteDiv.className = 'quote-badge';
+                quoteDiv.innerText = msg.quoteText;
+                contentDiv.appendChild(quoteDiv);
+            }
+            
+            const bubble=document.createElement('div'); 
+            bubble.className='bubble'; 
+            if(msg.isImage){ 
+                bubble.classList.add('bubble-image'); 
+                const img=document.createElement('img'); 
+                img.src=msg.content; 
+                bubble.appendChild(img); 
+            } else if(msg.isEmoji){ 
+                bubble.classList.add('bubble-emoji'); 
+                const img=document.createElement('img'); 
+                img.src=msg.content; 
+                bubble.appendChild(img); 
+            } else { 
+                bubble.innerText=msg.content; 
+                applyBubbleStyle(bubble, msg.type); 
+            } 
+            const timeSpan=document.createElement('div'); 
+            timeSpan.className='timestamp'; 
+            timeSpan.innerText=msg.time; 
+            contentDiv.appendChild(bubble); 
+            contentDiv.appendChild(timeSpan); 
+            row.appendChild(avatar); 
+            row.appendChild(contentDiv);
+            
+            row.style.cursor = 'pointer';
+            row.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                let quoteContent = '';
+                if(msg.isImage) quoteContent = '[图片]';
+                else if(msg.isEmoji) quoteContent = '[表情包]';
+                else quoteContent = msg.content;
+                if(quoteContent.length > 80) quoteContent = quoteContent.slice(0,77)+'...';
+                window.pendingQuote = { text: quoteContent, originalMsgId: msg.id || Date.now() + Math.random() };
+                showTemporaryHint("已引用: " + quoteContent.slice(0,30));
+            });
+            return row; 
+        }
+        
+        function showTemporaryHint(msg) {
+            const hint = document.createElement('div');
+            hint.innerText = msg;
+            hint.style.position = 'fixed';
+            hint.style.bottom = '90px';
+            hint.style.left = '50%';
+            hint.style.transform = 'translateX(-50%)';
+            hint.style.backgroundColor = '#1e2a3ecc';
+            hint.style.color = 'white';
+            hint.style.padding = '6px 16px';
+            hint.style.borderRadius = '30px';
+            hint.style.fontSize = '0.8rem';
+            hint.style.zIndex = '3000';
+            hint.style.backdropFilter = 'blur(4px)';
+            document.body.appendChild(hint);
+            setTimeout(() => hint.remove(), 1800);
+        }
+        
+        function renderAllMessages() { 
+            messagesContainer.innerHTML=''; 
+            chatMessages.forEach(m=>{
+                const el = renderMessageToDOM(m);
+                messagesContainer.appendChild(el);
+            });
+            messagesContainer.scrollTop=messagesContainer.scrollHeight; 
+        }
+        
+        function addMessage(content, type, isImage=false, isEmoji=false, quoteText=null){ 
+            const msg={ 
+                id: Date.now() + Math.random() * 10000,
+                type, content, isImage, isEmoji, time:formatTime(),
+                avatar:type==='user'?currentUserAvatar:currentContactAvatar,
+                quoteText: quoteText || null
+            }; 
+            chatMessages.push(msg); 
+            persistAll(); 
+            const domMsg = renderMessageToDOM(msg);
+            messagesContainer.appendChild(domMsg);
+            messagesContainer.scrollTop=messagesContainer.scrollHeight; 
+            return msg; 
+        }
+        
         function applyBg(){ if(settings.bgImage && settings.bgImage!=='null'){ messagesBgLayer.style.backgroundImage=`url(${settings.bgImage})`; messagesBgLayer.style.backgroundSize='cover'; messagesBgLayer.style.backgroundPosition='center'; } else messagesBgLayer.style.backgroundImage=''; }
         function refreshUserInfo(){ headerContactName.innerText=settings.contactName||"密友"; currentUserAvatar=settings.userAvatar; currentContactAvatar=settings.contactAvatar; headerContactAvatar.src=(settings.contactAvatar && settings.contactAvatar!=='null')?settings.contactAvatar:DEFAULT_AVATAR_SVG; renderAllMessages(); }
         function applyThemeAndBubbles(){ headerArea.style.backgroundColor=settings.themeColor; document.querySelector('.input-area').style.backgroundColor=settings.themeColor; document.querySelectorAll('.message-row .bubble:not(.bubble-image):not(.bubble-emoji)').forEach(b=>{ const row=b.closest('.message-row'); if(row){ const type=row.classList.contains('user')?'user':'contact'; applyBubbleStyle(b,type); } }); }
-        // 智能回复等简化 (保留原有引擎)
+        
         function getRandomTextCards(){ if(!lexicon.length) return ["（静谧时刻，添加一些字卡吧）"]; const cnt=Math.floor(Math.random()*3)+1; const res=[]; for(let i=0;i<cnt;i++) res.push(removeQuotes(lexicon[Math.floor(Math.random()*lexicon.length)]).trim()||"…"); return res; }
-        function getRandomReply(){ if(emojis.length && Math.random()<EMOJI_REPLY_PROBABILITY) return {type:'emoji', content:emojis[Math.floor(Math.random()*emojis.length)]}; return {type:'textArray', content:getRandomTextCards()}; }
-        let replyQueue=[], isReplying=false; function processReply(){ if(!replyQueue.length){ isReplying=false; return; } if(isReplying) return; const item=replyQueue.shift(); isReplying=true; const delayBase=Math.random()*4000+2800; if(item.type==='emoji'){ setTimeout(()=>{ addMessage(item.content,'contact',false,true); setTimeout(()=>{ isReplying=false; processReply();},200);},delayBase); } else { const cards=item.content; let acc=delayBase; cards.forEach((card,idx)=>{ setTimeout(()=>{ addMessage(card,'contact',false,false); if(idx===cards.length-1) setTimeout(()=>{ isReplying=false; processReply();},250);},acc); acc+=MESSAGE_INTERVAL; }); } }
-        function triggerContactReply(){ replyQueue.push(getRandomReply()); processReply(); }
-        let userReplyTimer=null; function onUserActionAfterSend(){ if(userReplyTimer) clearTimeout(userReplyTimer); userReplyTimer=setTimeout(()=>{ triggerContactReply(); }, Math.random()*4500+2800); }
+        
+        function getRandomUserMessageToQuote() {
+            const userMsgs = chatMessages.filter(m => m.type === 'user' && !m.isImage && !m.isEmoji && m.content && m.content.trim() !== '');
+            if(userMsgs.length === 0) return null;
+            const randomMsg = userMsgs[Math.floor(Math.random() * userMsgs.length)];
+            let quote = randomMsg.content;
+            if(quote.length > 70) quote = quote.slice(0,67)+'...';
+            return quote;
+        }
+        
+        function getRandomReplyWithPossibleQuote() {
+            const shouldQuote = Math.random() < 0.15;
+            let quoteTarget = null;
+            if(shouldQuote) {
+                quoteTarget = getRandomUserMessageToQuote();
+            }
+            if(emojis.length && Math.random()<EMOJI_REPLY_PROBABILITY && !quoteTarget) return {type:'emoji', content:emojis[Math.floor(Math.random()*emojis.length)], quoteText: null};
+            const cards = getRandomTextCards();
+            if(quoteTarget) {
+                return {type:'textArray', content: [cards[0] || "✨"], quoteText: quoteTarget };
+            } else {
+                return {type:'textArray', content: cards, quoteText: null };
+            }
+        }
+        
+        let replyQueue=[], isReplying=false; 
+        function processReply(){ 
+            if(!replyQueue.length){ isReplying=false; return; } 
+            if(isReplying) return; 
+            const item=replyQueue.shift(); 
+            isReplying=true; 
+            const delayBase=Math.random()*4000+2800; 
+            if(item.type==='emoji'){ 
+                setTimeout(()=>{ 
+                    addMessage(item.content,'contact',false,true, item.quoteText || null); 
+                    setTimeout(()=>{ isReplying=false; processReply();},200);
+                },delayBase); 
+            } else { 
+                const cards=item.content; 
+                let acc=delayBase; 
+                cards.forEach((card,idx)=>{
+                    const quoteForThis = (idx === 0 && item.quoteText) ? item.quoteText : null;
+                    setTimeout(()=>{ 
+                        addMessage(card,'contact',false,false, quoteForThis); 
+                        if(idx===cards.length-1) setTimeout(()=>{ isReplying=false; processReply();},250);
+                    },acc); 
+                    acc+=MESSAGE_INTERVAL; 
+                }); 
+            } 
+        }
+        function triggerContactReply(){ replyQueue.push(getRandomReplyWithPossibleQuote()); processReply(); }
+        let userReplyTimer=null; 
+        function onUserActionAfterSend(){ if(userReplyTimer) clearTimeout(userReplyTimer); userReplyTimer=setTimeout(()=>{ triggerContactReply(); }, Math.random()*4500+2800); }
         function canSendMessage(){ const now=Date.now(); if(now-lastMessageTime>=MESSAGE_INTERVAL){ lastMessageTime=now; return true; } alert(`请等待 ${Math.ceil((MESSAGE_INTERVAL-(now-lastMessageTime))/1000)} 秒`); return false; }
-        function sendUserText(){ const text=messageInput.value.trim(); if(!text) return; if(!canSendMessage()) return; addMessage(text,'user',false,false); messageInput.value=''; onUserActionAfterSend(); }
+        
+        function sendUserTextWithQuote(){ 
+            const text=messageInput.value.trim(); 
+            if(!text) return; 
+            if(!canSendMessage()) return; 
+            let quote = null;
+            if(window.pendingQuote && window.pendingQuote.text) {
+                quote = window.pendingQuote.text;
+                window.pendingQuote = null;
+            }
+            addMessage(text,'user',false,false, quote); 
+            messageInput.value=''; 
+            onUserActionAfterSend(); 
+        }
         
         // DOM 元素绑定
         const messagesContainer = document.getElementById('messagesContainer'), messagesBgLayer = document.getElementById('messagesBgLayer'), messageInput = document.getElementById('messageInput'), sendBtn = document.getElementById('sendBtn'), sendImageBtn = document.getElementById('sendImageBtn'), sendEmojiBtn = document.getElementById('sendEmojiBtn'), headerContactAvatar = document.getElementById('headerContactAvatar'), headerContactName = document.getElementById('headerContactName'), headerArea = document.getElementById('headerArea'), openSettingsBtn = document.getElementById('openSettingsBtn'), settingsModal = document.getElementById('settingsModal'), closeSettingsBtn = document.getElementById('closeSettingsBtn'), saveSettingsBtn = document.getElementById('saveSettingsBtn');
@@ -604,30 +806,29 @@
         async function handleAvatar(file,isUser){ if(!file) return; const compressed=await processImageFile(file,200,0.7); if(compressed){ if(isUser) settings.userAvatar=compressed; else settings.contactAvatar=compressed; persistAll(); refreshUserInfo(); } }
         function openSettingsModal(){ setUserNameInput.value=settings.userName; setContactNameInput.value=settings.contactName; themeColorPicker.value=settings.themeColor; myBubbleColorPicker.value=settings.myBubbleColor; myBubbleOpacitySlider.value=settings.myBubbleOpacity; myBubbleTextColorPicker.value=settings.myBubbleTextColor; contactBubbleColorPicker.value=settings.contactBubbleColor; contactBubbleOpacitySlider.value=settings.contactBubbleOpacity; contactBubbleTextColorPicker.value=settings.contactBubbleTextColor; myOpacityVal.innerText=Math.round(settings.myBubbleOpacity*100)+'%'; contactOpacityVal.innerText=Math.round(settings.contactBubbleOpacity*100)+'%'; renderLexiconUI(); renderEmojiLibrary(); if(settings.bgImage) bgPreview.innerHTML=`<img src="${settings.bgImage}">`; else bgPreview.innerHTML='<div>未设置背景</div>'; settingsModal.classList.add('open'); }
         function saveAllSettings(){ settings.userName=setUserNameInput.value.trim()||"我"; settings.contactName=setContactNameInput.value.trim()||"密友"; settings.themeColor=themeColorPicker.value; settings.myBubbleColor=myBubbleColorPicker.value; settings.myBubbleOpacity=parseFloat(myBubbleOpacitySlider.value); settings.myBubbleTextColor=myBubbleTextColorPicker.value; settings.contactBubbleColor=contactBubbleColorPicker.value; settings.contactBubbleOpacity=parseFloat(contactBubbleOpacitySlider.value); settings.contactBubbleTextColor=contactBubbleTextColorPicker.value; persistAll(); refreshUserInfo(); applyThemeAndBubbles(); settingsModal.classList.remove('open'); alert("所有个性化已保存✨"); }
-        async function sendUserImage(){ if(!canSendMessage()) return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=async(e)=>{ const f=e.target.files[0]; if(f){ const compressed=await processImageFile(f,550,0.7); if(compressed){ addMessage(compressed,'user',true,false); onUserActionAfterSend(); } else alert("图片上传失败"); } }; input.click(); }
-        function showEmojiPickerModal(){ if(!canSendMessage()) return; if(!emojis.length){ alert('请先在设置中添加表情包'); return; } const overlay=document.createElement('div'); overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center;'; const panel=document.createElement('div'); panel.style.cssText='background:#fff;border-radius:28px;padding:20px;max-width:360px;max-height:70vh;overflow-y:auto;'; panel.innerHTML='<h4>选择表情包</h4><div style="display:flex;flex-wrap:wrap;gap:12px;"></div><button style="margin-top:14px;padding:8px 18px;">取消</button>'; const gridDiv=panel.querySelector('div'); emojis.forEach(emoji=>{ const img=document.createElement('img'); img.src=emoji; img.style.width='65px'; img.style.height='65px'; img.style.borderRadius='14px'; img.style.cursor='pointer'; img.onclick=()=>{ addMessage(emoji,'user',false,true); onUserActionAfterSend(); document.body.removeChild(overlay); }; gridDiv.appendChild(img); }); panel.querySelector('button').onclick=()=>document.body.removeChild(overlay); overlay.appendChild(panel); document.body.appendChild(overlay); }
+        async function sendUserImage(){ if(!canSendMessage()) return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=async(e)=>{ const f=e.target.files[0]; if(f){ const compressed=await processImageFile(f,550,0.7); if(compressed){ addMessage(compressed,'user',true,false, null); onUserActionAfterSend(); } else alert("图片上传失败"); } }; input.click(); }
+        function showEmojiPickerModal(){ if(!canSendMessage()) return; if(!emojis.length){ alert('请先在设置中添加表情包'); return; } const overlay=document.createElement('div'); overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center;'; const panel=document.createElement('div'); panel.style.cssText='background:#fff;border-radius:28px;padding:20px;max-width:360px;max-height:70vh;overflow-y:auto;'; panel.innerHTML='<h4>选择表情包</h4><div style="display:flex;flex-wrap:wrap;gap:12px;"></div><button style="margin-top:14px;padding:8px 18px;">取消</button>'; const gridDiv=panel.querySelector('div'); emojis.forEach(emoji=>{ const img=document.createElement('img'); img.src=emoji; img.style.width='65px'; img.style.height='65px'; img.style.borderRadius='14px'; img.style.cursor='pointer'; img.onclick=()=>{ addMessage(emoji,'user',false,true, null); onUserActionAfterSend(); document.body.removeChild(overlay); }; gridDiv.appendChild(img); }); panel.querySelector('button').onclick=()=>document.body.removeChild(overlay); overlay.appendChild(panel); document.body.appendChild(overlay); }
         
-        // 番茄钟逻辑 (独立持久化到localStorage)
+        // 番茄钟逻辑
         let timerInterval = null, remainingSeconds = 25*60, isRunning = false;
-        const timerDisplaySpan = document.getElementById('timerDisplay'), taskInput = document.getElementById('taskInput'), minutesInput = document.getElementById('minutesInput'), startBtn = document.getElementById('startTimerBtn'), pauseBtn = document.getElementById('pauseTimerBtn'), resetBtn = document.getElementById('resetTimerBtn'), timerStatusSpan = document.getElementById('timerStatus');
+        const timerDisplaySpan = document.getElementById('timerDisplay'), minutesInput = document.getElementById('minutesInput'), startBtn = document.getElementById('startTimerBtn'), pauseBtn = document.getElementById('pauseTimerBtn'), resetBtn = document.getElementById('resetTimerBtn'), timerStatusSpan = document.getElementById('timerStatus'), taskInput = document.getElementById('taskInput');
         function updateDisplay(){ const mins = Math.floor(remainingSeconds/60); const secs = remainingSeconds%60; timerDisplaySpan.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`; }
         function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } isRunning=false; }
-        function startTimer(){ if(isRunning) return; if(remainingSeconds<=0) resetTimer(); isRunning=true; timerInterval = setInterval(()=>{ if(remainingSeconds<=0){ stopTimer(); timerStatusSpan.innerText=`✅ 专注完成！「${taskInput.value}」时间到，休息一下～`; new Audio()?.play?.().catch(e=>{}); } else { remainingSeconds--; updateDisplay(); const task = taskInput.value.trim()||"专注"; timerStatusSpan.innerText = `⏳ 专注中：${task} · 剩余 ${Math.floor(remainingSeconds/60)}分${remainingSeconds%60}秒`; } },1000); }
+        function startTimer(){ if(isRunning) return; if(remainingSeconds<=0) resetTimer(); isRunning=true; timerInterval = setInterval(()=>{ if(remainingSeconds<=0){ stopTimer(); timerStatusSpan.innerText=`✅ 专注完成！「${taskInput.value}」时间到，休息一下～`; } else { remainingSeconds--; updateDisplay(); const task = taskInput.value.trim()||"专注"; timerStatusSpan.innerText = `⏳ 专注中：${task} · 剩余 ${Math.floor(remainingSeconds/60)}分${remainingSeconds%60}秒`; } },1000); }
         function pauseTimer(){ stopTimer(); if(remainingSeconds>0) timerStatusSpan.innerText = `⏸ 已暂停 · 当前事项：「${taskInput.value||"未命名"}」`; else timerStatusSpan.innerText = "已暂停"; }
         function resetTimer(){ stopTimer(); let mins = parseInt(minutesInput.value); if(isNaN(mins) || mins<1) mins=25; remainingSeconds = mins*60; updateDisplay(); timerStatusSpan.innerText = `重置为 ${mins} 分钟 · 事项：「${taskInput.value||"无"}」 待开始`; }
         function syncTimerFromMinutes(){ if(!isRunning){ let mins = parseInt(minutesInput.value); if(isNaN(mins)||mins<1) mins=25; remainingSeconds = mins*60; updateDisplay(); timerStatusSpan.innerText = `时长已设为 ${mins} 分钟，点击开始`; } }
         minutesInput.addEventListener('change', syncTimerFromMinutes);
         startBtn.onclick = startTimer; pauseBtn.onclick = pauseTimer; resetBtn.onclick = resetTimer;
         
-        // 视图切换 & 事件绑定
         const chatView = document.getElementById('chatView'), featureView = document.getElementById('featureView'), openFeatureBtn = document.getElementById('openFeatureBtn'), backToChatBtn = document.getElementById('backToChatBtn');
         openFeatureBtn.onclick = () => { chatView.classList.add('hidden'); featureView.classList.remove('hidden'); if(timerInterval) stopTimer(); resetTimer(); };
         backToChatBtn.onclick = () => { featureView.classList.add('hidden'); chatView.classList.remove('hidden'); if(timerInterval) stopTimer(); };
         
-        function bindEvents(){ sendBtn.onclick=sendUserText; messageInput.onkeypress=e=>{if(e.key==='Enter')sendUserText();}; sendImageBtn.onclick=sendUserImage; sendEmojiBtn.onclick=showEmojiPickerModal; openSettingsBtn.onclick=openSettingsModal; closeSettingsBtn.onclick=()=>settingsModal.classList.remove('open'); saveSettingsBtn.onclick=saveAllSettings; userAvatarUpload.onchange=e=>{handleAvatar(e.target.files[0],true); e.target.value='';}; contactAvatarUpload.onchange=e=>{handleAvatar(e.target.files[0],false); e.target.value='';}; addEmojiInput.onchange=e=>{addEmojiFiles(Array.from(e.target.files)); e.target.value='';}; batchImportBtn.onclick=batchImportLexicon; clearAllLexiconBtn.onclick=clearLexiconAll; bgImageUpload.onchange=e=>{if(e.target.files[0]){processImageFile(e.target.files[0],1100,0.75).then(data=>{if(data){settings.bgImage=data; applyBg(); updateBgPreviewUI(); persistAll();}})} e.target.value='';}; removeBgBtn.onclick=()=>{settings.bgImage=null; applyBg(); updateBgPreviewUI(); persistAll();}; myBubbleOpacitySlider.oninput=()=>myOpacityVal.innerText=Math.round(myBubbleOpacitySlider.value*100)+'%'; contactBubbleOpacitySlider.oninput=()=>contactOpacityVal.innerText=Math.round(contactBubbleOpacitySlider.value*100)+'%'; }
+        function bindEvents(){ sendBtn.onclick=sendUserTextWithQuote; messageInput.onkeypress=e=>{if(e.key==='Enter')sendUserTextWithQuote();}; sendImageBtn.onclick=sendUserImage; sendEmojiBtn.onclick=showEmojiPickerModal; openSettingsBtn.onclick=openSettingsModal; closeSettingsBtn.onclick=()=>settingsModal.classList.remove('open'); saveSettingsBtn.onclick=saveAllSettings; userAvatarUpload.onchange=e=>{handleAvatar(e.target.files[0],true); e.target.value='';}; contactAvatarUpload.onchange=e=>{handleAvatar(e.target.files[0],false); e.target.value='';}; addEmojiInput.onchange=e=>{addEmojiFiles(Array.from(e.target.files)); e.target.value='';}; batchImportBtn.onclick=batchImportLexicon; clearAllLexiconBtn.onclick=clearLexiconAll; bgImageUpload.onchange=e=>{if(e.target.files[0]){processImageFile(e.target.files[0],1100,0.75).then(data=>{if(data){settings.bgImage=data; applyBg(); updateBgPreviewUI(); persistAll();}})} e.target.value='';}; removeBgBtn.onclick=()=>{settings.bgImage=null; applyBg(); updateBgPreviewUI(); persistAll();}; myBubbleOpacitySlider.oninput=()=>myOpacityVal.innerText=Math.round(myBubbleOpacitySlider.value*100)+'%'; contactBubbleOpacitySlider.oninput=()=>contactOpacityVal.innerText=Math.round(contactBubbleOpacitySlider.value*100)+'%'; }
         function updateBgPreviewUI(){ if(settings.bgImage) bgPreview.innerHTML=`<img src="${settings.bgImage}">`; else bgPreview.innerHTML='<div>未设置背景</div>'; }
-        function initWelcome(){ if(chatMessages.length===0){ setTimeout(()=>addMessage("这里只属于我们。所有设置都会永久保存✨",'contact'),400); setTimeout(()=>addMessage("试试调整背景、字卡、气泡文字颜色，还有功能页的番茄钟✨",'contact'),1800); } }
-        function init(){ loadAll(); applyBg(); refreshUserInfo(); applyThemeAndBubbles(); renderAllMessages(); renderLexiconUI(); renderEmojiLibrary(); bindEvents(); initWelcome(); lastMessageTime=Date.now(); window.addEventListener('beforeunload',()=>persistAll()); }
+        function initWelcome(){ if(chatMessages.length===0){ setTimeout(()=>addMessage("这里只属于我们。所有设置都会永久保存✨",'contact'),400); setTimeout(()=>addMessage("双击消息气泡可引用，联系人有时会随机引用你的话(15%概率)✨",'contact'),1800); } }
+        function init(){ loadAll(); applyBg(); refreshUserInfo(); applyThemeAndBubbles(); renderAllMessages(); renderLexiconUI(); renderEmojiLibrary(); bindEvents(); initWelcome(); lastMessageTime=Date.now(); window.pendingQuote = null; window.addEventListener('beforeunload',()=>persistAll()); }
         init();
     })();
 </script>
