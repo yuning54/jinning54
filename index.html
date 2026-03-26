@@ -167,7 +167,6 @@
             display: flex;
             flex-direction: column;
             max-width: 70%;
-            /* 关键：让内容容器宽度由内部元素决定，但不强制拉伸 */
             width: fit-content;
             min-width: 40px;
         }
@@ -186,7 +185,6 @@
             white-space: pre-wrap;
             font-style: normal;
             display: inline-block;
-            /* 让引用框独立宽度，不强制拉伸父容器 */
             width: auto;
         }
         .user .quote-badge {
@@ -205,12 +203,10 @@
             word-break: break-word;
             white-space: pre-wrap;
             transition: background-color 0.1s, color 0.1s;
-            /* 气泡宽度根据内容自适应，不受引用框影响 */
             width: fit-content;
             max-width: 100%;
         }
         
-        /* 确保气泡容器本身也是自适应宽度 */
         .message-content .bubble {
             display: inline-block;
         }
@@ -258,7 +254,6 @@
             text-align: right;
         }
         
-        /* 确保消息内容区域对齐正确 */
         .user .message-content {
             align-items: flex-end;
         }
@@ -631,7 +626,6 @@
             const contentDiv=document.createElement('div'); 
             contentDiv.className='message-content';
             
-            // 引用框独立添加，不参与气泡宽度
             if(msg.quoteText && msg.quoteText.trim() !== '') {
                 const quoteDiv = document.createElement('div');
                 quoteDiv.className = 'quote-badge';
@@ -725,10 +719,18 @@
         
         function getRandomTextCards(){ if(!lexicon.length) return ["（静谧时刻，添加一些字卡吧）"]; const cnt=Math.floor(Math.random()*3)+1; const res=[]; for(let i=0;i<cnt;i++) res.push(removeQuotes(lexicon[Math.floor(Math.random()*lexicon.length)]).trim()||"…"); return res; }
         
+        // 获取随机用户消息 - 限定在最近10条以内
         function getRandomUserMessageToQuote() {
-            const userMsgs = chatMessages.filter(m => m.type === 'user' && !m.isImage && !m.isEmoji && m.content && m.content.trim() !== '');
-            if(userMsgs.length === 0) return null;
-            const randomMsg = userMsgs[Math.floor(Math.random() * userMsgs.length)];
+            // 筛选出所有用户发送的纯文本消息（非图片非表情）
+            const allUserMsgs = chatMessages.filter(m => m.type === 'user' && !m.isImage && !m.isEmoji && m.content && m.content.trim() !== '');
+            if(allUserMsgs.length === 0) return null;
+            
+            // 获取最近10条以内的用户消息（按时间顺序，后面的索引更新）
+            // 由于chatMessages是按时间顺序存储的，取最后10条符合条件的消息
+            const recentMsgs = allUserMsgs.slice(-10);
+            if(recentMsgs.length === 0) return null;
+            
+            const randomMsg = recentMsgs[Math.floor(Math.random() * recentMsgs.length)];
             let quote = randomMsg.content;
             if(quote.length > 70) quote = quote.slice(0,67)+'...';
             return quote;
@@ -827,7 +829,7 @@
         
         function bindEvents(){ sendBtn.onclick=sendUserTextWithQuote; messageInput.onkeypress=e=>{if(e.key==='Enter')sendUserTextWithQuote();}; sendImageBtn.onclick=sendUserImage; sendEmojiBtn.onclick=showEmojiPickerModal; openSettingsBtn.onclick=openSettingsModal; closeSettingsBtn.onclick=()=>settingsModal.classList.remove('open'); saveSettingsBtn.onclick=saveAllSettings; userAvatarUpload.onchange=e=>{handleAvatar(e.target.files[0],true); e.target.value='';}; contactAvatarUpload.onchange=e=>{handleAvatar(e.target.files[0],false); e.target.value='';}; addEmojiInput.onchange=e=>{addEmojiFiles(Array.from(e.target.files)); e.target.value='';}; batchImportBtn.onclick=batchImportLexicon; clearAllLexiconBtn.onclick=clearLexiconAll; bgImageUpload.onchange=e=>{if(e.target.files[0]){processImageFile(e.target.files[0],1100,0.75).then(data=>{if(data){settings.bgImage=data; applyBg(); updateBgPreviewUI(); persistAll();}})} e.target.value='';}; removeBgBtn.onclick=()=>{settings.bgImage=null; applyBg(); updateBgPreviewUI(); persistAll();}; myBubbleOpacitySlider.oninput=()=>myOpacityVal.innerText=Math.round(myBubbleOpacitySlider.value*100)+'%'; contactBubbleOpacitySlider.oninput=()=>contactOpacityVal.innerText=Math.round(contactBubbleOpacitySlider.value*100)+'%'; }
         function updateBgPreviewUI(){ if(settings.bgImage) bgPreview.innerHTML=`<img src="${settings.bgImage}">`; else bgPreview.innerHTML='<div>未设置背景</div>'; }
-        function initWelcome(){ if(chatMessages.length===0){ setTimeout(()=>addMessage("这里只属于我们。所有设置都会永久保存✨",'contact'),400); setTimeout(()=>addMessage("双击消息气泡可引用，联系人有时会随机引用你的话(15%概率)✨",'contact'),1800); } }
+        function initWelcome(){ if(chatMessages.length===0){ setTimeout(()=>addMessage("这里只属于我们。所有设置都会永久保存✨",'contact'),400); setTimeout(()=>addMessage("双击消息气泡可引用，联系人有时会随机引用你最近10条内的话(15%概率)✨",'contact'),1800); } }
         function init(){ loadAll(); applyBg(); refreshUserInfo(); applyThemeAndBubbles(); renderAllMessages(); renderLexiconUI(); renderEmojiLibrary(); bindEvents(); initWelcome(); lastMessageTime=Date.now(); window.pendingQuote = null; window.addEventListener('beforeunload',()=>persistAll()); }
         init();
     })();
