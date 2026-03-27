@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>锦时予宁 | 永恒珍藏版 · 回声絮语</title>
+    <title>锦时予宁 | 永恒珍藏版 · 引用回声</title>
     <style>
         * {
             margin: 0;
@@ -649,6 +649,7 @@
         <div class="setting-group"><h3>🎨 主题与气泡样式</h3><div class="color-row"><label>头部/输入框</label><input type="color" id="themeColorPicker" value="#ffffff"></div><h3>💬 我的气泡</h3><div class="color-row"><label>背景色</label><input type="color" id="myBubbleColor" value="#e9eef3"><label>透明度</label><input type="range" id="myBubbleOpacity" min="0" max="1" step="0.05" value="1"><span id="myOpacityVal">100%</span></div><div class="color-row"><label>文字颜色</label><input type="color" id="myBubbleTextColor" value="#1e2a3e"></div><h3>💬 联系人气泡</h3><div class="color-row"><label>背景色</label><input type="color" id="contactBubbleColor" value="#f1f3f7"><label>透明度</label><input type="range" id="contactBubbleOpacity" min="0" max="1" step="0.05" value="1"><span id="contactOpacityVal">100%</span></div><div class="color-row"><label>文字颜色</label><input type="color" id="contactBubbleTextColor" value="#1e2a3e"></div></div>
         <div class="setting-group"><h3>😊 表情包仓库</h3><div class="emoji-manager"><div class="row"><label class="file-input-label">➕ 添加表情包<input type="file" id="addEmojiInput" accept="image/*" multiple></label><span>批量上传</span></div><div id="emojiGrid" class="emoji-grid"></div></div></div>
         <div class="setting-group"><h3>📚 字卡库</h3><div class="lexicon-manager"><div class="batch-import-area"><textarea id="batchLexiconInput" rows="2" placeholder="每行一条字卡"></textarea><button id="batchImportBtn">📥 批量导入</button><button id="clearAllLexiconBtn" style="background:#ffe6e6;">🗑️ 清空所有</button></div><div class="lexicon-preview"><div>当前字卡 <span id="lexiconCount">0</span> 条</div><div id="lexiconItemsList" class="lexicon-items-list"></div></div></div></div>
+        <!-- 新增清空聊天记录功能区 -->
         <div class="setting-group"><h3>🗑️ 危险操作区</h3><button id="clearAllMessagesBtn" class="danger-btn" style="width:100%;">⚠️ 清空所有聊天记录 (不可恢复)</button></div>
         <div class="flex-btns"><button class="save-btn" id="saveSettingsBtn">💾 永久保存所有设置</button><button class="close-modal" id="closeSettingsBtn">取消</button></div>
     </div>
@@ -656,7 +657,6 @@
 
 <script>
     (function() {
-        // ---------- 存储KEY ----------
         const STORAGE_KEYS = { 
             SETTINGS: "eternal_chat_settings_v2", 
             LEXICON: "eternal_chat_lexicon_v2", 
@@ -677,6 +677,7 @@
         let currentUserAvatar = null, currentContactAvatar = null;
         let lastMessageTime = 0;
         const MESSAGE_INTERVAL = 2000;
+        
         const DEFAULT_AVATAR_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238ba3bc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
         
         function removeQuotes(str) { return str ? str.replace(/["“”]/g, '') : ""; }
@@ -828,6 +829,7 @@
                 persistAll();
                 renderAllMessages();
                 showHint("✅ 聊天记录已全部清空");
+                // 清空后不再自动添加额外提示，保持界面干净
             }
         }
         
@@ -859,88 +861,72 @@
             });
         }
         
-        // ----- 核心回复逻辑 -----
-        // 从字卡库随机取 1~3 条
         function getRandomTextCards() {
             if (!lexicon.length) return ["✨ 静谧时刻，添加一些字卡吧"];
-            const count = Math.floor(Math.random() * 3) + 1;  // 1 ~ 3条
-            const selected = [];
-            const shuffled = [...lexicon];
-            for (let i = 0; i < count && shuffled.length; i++) {
-                const randIndex = Math.floor(Math.random() * shuffled.length);
-                selected.push(removeQuotes(shuffled[randIndex]).trim() || "…");
-                shuffled.splice(randIndex, 1);
-            }
-            return selected;
+            const cnt = Math.floor(Math.random() * 2) + 1;
+            const res = [];
+            for (let i = 0; i < cnt; i++) res.push(removeQuotes(lexicon[Math.floor(Math.random() * lexicon.length)]).trim() || "…");
+            return res;
         }
         
-        // 获取回复内容 (表情包概率 18%)
+        function getRandomUserMessageToQuote() {
+            const userTextMsgs = chatMessages.filter(m => m.type === 'user' && !m.isImage && !m.isEmoji && m.content && m.content.trim());
+            if (!userTextMsgs.length) return null;
+            const recent = userTextMsgs.slice(-10);
+            const random = recent[Math.floor(Math.random() * recent.length)];
+            let quote = random.content;
+            if (quote.length > 70) quote = quote.slice(0,67) + '...';
+            return quote;
+        }
+        
         function getRandomReply() {
-            const hasEmojis = emojis && emojis.length > 0;
-            // 表情包概率 18%，且必须有表情包库
-            if (hasEmojis && Math.random() < 0.18) {
-                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-                return { type: 'emoji', content: randomEmoji, quoteText: null };
+            const shouldQuote = Math.random() < 0.15;
+            let quoteTarget = shouldQuote ? getRandomUserMessageToQuote() : null;
+            if (emojis.length && Math.random() < 0.2 && !quoteTarget) {
+                return { type: 'emoji', content: emojis[Math.floor(Math.random() * emojis.length)], quoteText: null };
             }
-            // 文本回复: 15% 概率引用最近用户消息 (仅当有用户文本消息时)
-            let quoteTarget = null;
-            if (Math.random() < 0.15) {
-                const userTextMsgs = chatMessages.filter(m => m.type === 'user' && !m.isImage && !m.isEmoji && m.content && m.content.trim());
-                if (userTextMsgs.length) {
-                    const recent = userTextMsgs.slice(-10);
-                    const randomMsg = recent[Math.floor(Math.random() * recent.length)];
-                    if (randomMsg) quoteTarget = randomMsg.content.length > 70 ? randomMsg.content.slice(0,67)+'...' : randomMsg.content;
-                }
+            const cards = getRandomTextCards();
+            if (quoteTarget) {
+                return { type: 'textArray', content: [cards[0] || "✨"], quoteText: quoteTarget };
             }
-            const textArray = getRandomTextCards();
-            return { type: 'textArray', content: textArray, quoteText: quoteTarget };
+            return { type: 'textArray', content: cards, quoteText: null };
         }
         
         let replyQueue = [], isReplying = false;
-        
         function processReply() {
             if (!replyQueue.length) { isReplying = false; return; }
             if (isReplying) return;
             const item = replyQueue.shift();
             isReplying = true;
-            let firstDelay = item.delayFirst !== undefined ? item.delayFirst : (3000 + Math.random() * 4000);
-            
+            const delayBase = Math.random() * 4000 + 2800;
             if (item.type === 'emoji') {
                 setTimeout(() => {
                     addMessage(item.content, 'contact', false, true, item.quoteText);
                     setTimeout(() => { isReplying = false; processReply(); }, 200);
-                }, firstDelay);
+                }, delayBase);
             } else {
                 const cards = item.content;
-                let cumulative = firstDelay;
+                let acc = delayBase;
                 cards.forEach((card, idx) => {
                     const quoteForThis = (idx === 0 && item.quoteText) ? item.quoteText : null;
                     setTimeout(() => {
                         addMessage(card, 'contact', false, false, quoteForThis);
-                        if (idx === cards.length - 1) {
-                            setTimeout(() => { isReplying = false; processReply(); }, 200);
-                        }
-                    }, cumulative);
-                    cumulative += 2000; // 每条间隔2秒
+                        if (idx === cards.length - 1) setTimeout(() => { isReplying = false; processReply(); }, 250);
+                    }, acc);
+                    acc += 2000;
                 });
             }
         }
         
         function triggerContactReply() {
-            const replyObj = getRandomReply();
-            const delayFirstMs = 3000 + Math.random() * 4000; // 3~7s 第一条延迟
-            if (replyObj.type === 'emoji') {
-                replyQueue.push({ type: 'emoji', content: replyObj.content, quoteText: replyObj.quoteText, delayFirst: delayFirstMs });
-            } else {
-                replyQueue.push({ type: 'textArray', content: replyObj.content, quoteText: replyObj.quoteText, delayFirst: delayFirstMs });
-            }
+            replyQueue.push(getRandomReply());
             processReply();
         }
         
         let userReplyTimer = null;
         function onUserAction() {
             if (userReplyTimer) clearTimeout(userReplyTimer);
-            userReplyTimer = setTimeout(() => triggerContactReply(), 300);
+            userReplyTimer = setTimeout(() => triggerContactReply(), Math.random() * 4500 + 2800);
         }
         
         function canSendMessage() {
@@ -968,7 +954,7 @@
             onUserAction();
         }
         
-        // 番茄钟逻辑 (保持不变)
+        // 番茄钟
         let timerInterval = null, remainingSeconds = 25 * 60, isTimerRunning = false;
         const timerDisplay = document.getElementById('timerDisplay');
         const minutesInput = document.getElementById('minutesInput');
@@ -1049,7 +1035,7 @@
             document.body.appendChild(overlay);
         };
         
-        // 设置面板逻辑 (完整保留)
+        // 设置相关
         const modal = document.getElementById('settingsModal');
         document.getElementById('openSettingsBtn').onclick = () => {
             document.getElementById('setUserName').value = settings.userName;
@@ -1068,6 +1054,7 @@
             renderLexiconUI();
             modal.classList.add('open');
         };
+        
         document.getElementById('closeSettingsBtn').onclick = () => modal.classList.remove('open');
         document.getElementById('saveSettingsBtn').onclick = () => {
             settings.userName = document.getElementById('setUserName').value.trim() || "我";
@@ -1085,6 +1072,8 @@
             modal.classList.remove('open');
             alert("所有个性化已永久保存✨");
         };
+        
+        // 清空聊天记录按钮
         document.getElementById('clearAllMessagesBtn').onclick = clearAllChatHistory;
         
         async function handleAvatar(file, isUser) {
@@ -1099,6 +1088,7 @@
         }
         document.getElementById('userAvatarUpload').onchange = e => { handleAvatar(e.target.files[0], true); e.target.value = ''; };
         document.getElementById('contactAvatarUpload').onchange = e => { handleAvatar(e.target.files[0], false); e.target.value = ''; };
+        
         document.getElementById('bgImageUpload').onchange = async e => {
             if (e.target.files[0]) {
                 const compressed = await compressImage(e.target.files[0], 1000, 0.7);
@@ -1107,6 +1097,7 @@
             e.target.value = '';
         };
         document.getElementById('removeBgBtn').onclick = () => { settings.bgImage = null; applyBg(); persistAll(); document.getElementById('bgPreview').innerHTML = '<div>未设置背景</div>'; };
+        
         document.getElementById('myBubbleOpacity').oninput = () => document.getElementById('myOpacityVal').innerText = Math.round(document.getElementById('myBubbleOpacity').value * 100) + '%';
         document.getElementById('contactBubbleOpacity').oninput = () => document.getElementById('contactOpacityVal').innerText = Math.round(document.getElementById('contactBubbleOpacity').value * 100) + '%';
         
@@ -1122,6 +1113,7 @@
                 grid.appendChild(div);
             });
         }
+        
         document.getElementById('addEmojiInput').onchange = async e => {
             const files = Array.from(e.target.files);
             for (let f of files) {
@@ -1155,7 +1147,9 @@
                 };
             });
         }
+        
         function escapeHtml(s) { return s.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+        
         document.getElementById('batchImportBtn').onclick = () => {
             const text = document.getElementById('batchLexiconInput').value;
             if (!text.trim()) return;
@@ -1167,22 +1161,26 @@
         };
         document.getElementById('clearAllLexiconBtn').onclick = () => { if (confirm('永久删除所有字卡？')) { lexicon = []; persistAll(); renderLexiconUI(); } };
         
+        // 番茄钟按钮
         document.getElementById('startTimerBtn').onclick = startTimer;
         document.getElementById('pauseTimerBtn').onclick = pauseTimer;
         document.getElementById('resetTimerBtn').onclick = resetTimer;
         minutesInput.onchange = () => { if (!isTimerRunning) resetTimer(); };
         
+        // 视图切换
         const chatView = document.getElementById('chatView'), featureView = document.getElementById('featureView');
         document.getElementById('openFeatureBtn').onclick = () => { chatView.classList.add('hidden'); featureView.classList.remove('hidden'); stopTimer(); resetTimer(); };
         document.getElementById('backToChatBtn').onclick = () => { featureView.classList.add('hidden'); chatView.classList.remove('hidden'); stopTimer(); };
         
+        // 欢迎消息 - 只在首次加载且没有聊天记录时添加，且不会重复
         function initWelcome() {
             if (chatMessages.length === 0) {
                 setTimeout(() => addMessage("这里只属于我们。所有设置都会永久保存✨", 'contact'), 400);
-                setTimeout(() => addMessage("双击消息可引用，我每次会从字卡库随机回复1~3条，间隔2秒，首条延迟3~7秒。表情包概率18% ✨", 'contact'), 1800);
+                setTimeout(() => addMessage("双击消息气泡可引用，联系人有时会随机引用你最近10条内的话(15%概率)✨", 'contact'), 1800);
             }
         }
         
+        // 初始化
         loadAll();
         applyBg();
         refreshUserInfo();
