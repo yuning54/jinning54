@@ -555,6 +555,19 @@
         .save-btn { background: #1e2a3e; color: white; border: none; padding: 10px; border-radius: 48px; font-weight: 600; margin-top: 4px; cursor: pointer; font-size: 0.9rem; }
         .close-modal { background: none; border: 1px solid #e2e8f0; padding: 10px; border-radius: 48px; margin-top: 4px; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
         .flex-btns { display: flex; gap: 12px; }
+        .danger-btn {
+            background: #fff1f0;
+            border: 1px solid #ffccc7;
+            color: #d4380d;
+            padding: 10px;
+            border-radius: 48px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.1s;
+            text-align: center;
+        }
+        .danger-btn:active { transform: scale(0.97); background: #ffe7e5; }
         .emoji-manager { background: #fafcff; border-radius: 20px; padding: 10px; margin-top: 4px; }
         .emoji-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; max-height: 180px; overflow-y: auto; }
         .emoji-item { position: relative; display: inline-block; cursor: pointer; }
@@ -636,6 +649,8 @@
         <div class="setting-group"><h3>🎨 主题与气泡样式</h3><div class="color-row"><label>头部/输入框</label><input type="color" id="themeColorPicker" value="#ffffff"></div><h3>💬 我的气泡</h3><div class="color-row"><label>背景色</label><input type="color" id="myBubbleColor" value="#e9eef3"><label>透明度</label><input type="range" id="myBubbleOpacity" min="0" max="1" step="0.05" value="1"><span id="myOpacityVal">100%</span></div><div class="color-row"><label>文字颜色</label><input type="color" id="myBubbleTextColor" value="#1e2a3e"></div><h3>💬 联系人气泡</h3><div class="color-row"><label>背景色</label><input type="color" id="contactBubbleColor" value="#f1f3f7"><label>透明度</label><input type="range" id="contactBubbleOpacity" min="0" max="1" step="0.05" value="1"><span id="contactOpacityVal">100%</span></div><div class="color-row"><label>文字颜色</label><input type="color" id="contactBubbleTextColor" value="#1e2a3e"></div></div>
         <div class="setting-group"><h3>😊 表情包仓库</h3><div class="emoji-manager"><div class="row"><label class="file-input-label">➕ 添加表情包<input type="file" id="addEmojiInput" accept="image/*" multiple></label><span>批量上传</span></div><div id="emojiGrid" class="emoji-grid"></div></div></div>
         <div class="setting-group"><h3>📚 字卡库</h3><div class="lexicon-manager"><div class="batch-import-area"><textarea id="batchLexiconInput" rows="2" placeholder="每行一条字卡"></textarea><button id="batchImportBtn">📥 批量导入</button><button id="clearAllLexiconBtn" style="background:#ffe6e6;">🗑️ 清空所有</button></div><div class="lexicon-preview"><div>当前字卡 <span id="lexiconCount">0</span> 条</div><div id="lexiconItemsList" class="lexicon-items-list"></div></div></div></div>
+        <!-- 新增清空聊天记录功能区 -->
+        <div class="setting-group"><h3>🗑️ 危险操作区</h3><button id="clearAllMessagesBtn" class="danger-btn" style="width:100%;">⚠️ 清空所有聊天记录 (不可恢复)</button></div>
         <div class="flex-btns"><button class="save-btn" id="saveSettingsBtn">💾 永久保存所有设置</button><button class="close-modal" id="closeSettingsBtn">取消</button></div>
     </div>
 </div>
@@ -656,7 +671,8 @@
             userAvatar: null, contactAvatar: null, 
             themeColor: "#ffffff", 
             myBubbleColor: "#e9eef3", myBubbleOpacity: 1, myBubbleTextColor: "#1e2a3e",
-            contactBubbleColor: "#f1f3f7", contactBubbleOpacity: 1, contactBubbleTextColor: "#1e2a3e"
+            contactBubbleColor: "#f1f3f7", contactBubbleOpacity: 1, contactBubbleTextColor: "#1e2a3e",
+            bgImage: null
         };
         let currentUserAvatar = null, currentContactAvatar = null;
         let lastMessageTime = 0;
@@ -709,6 +725,7 @@
                 if (savedMsg && Array.isArray(JSON.parse(savedMsg))) chatMessages = JSON.parse(savedMsg);
                 if (settings.myBubbleTextColor === undefined) settings.myBubbleTextColor = "#1e2a3e";
                 if (settings.contactBubbleTextColor === undefined) settings.contactBubbleTextColor = "#1e2a3e";
+                if (settings.bgImage === undefined) settings.bgImage = null;
             } catch(e) { lexicon = [...DEFAULT_LEXICON]; }
         }
         
@@ -804,6 +821,16 @@
             container.appendChild(renderMessageToDOM(msg));
             container.scrollTop = container.scrollHeight;
             return msg;
+        }
+        
+        function clearAllChatHistory() {
+            if (confirm("⚠️ 警告：清空所有聊天记录后无法恢复！\n确定要永久删除全部消息吗？")) {
+                chatMessages = [];
+                persistAll();
+                renderAllMessages();
+                showHint("✅ 聊天记录已全部清空");
+                // 清空后不再自动添加额外提示，保持界面干净
+            }
         }
         
         function applyBg() {
@@ -1045,6 +1072,9 @@
             modal.classList.remove('open');
             alert("所有个性化已永久保存✨");
         };
+        
+        // 清空聊天记录按钮
+        document.getElementById('clearAllMessagesBtn').onclick = clearAllChatHistory;
         
         async function handleAvatar(file, isUser) {
             if (!file) return;
