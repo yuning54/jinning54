@@ -123,6 +123,7 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 50%;
+            transition: 0.1s;
             line-height: 1;
             opacity: 0.65;
             min-width: 40px;
@@ -130,10 +131,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: none;
         }
         
-        .settings-cog:active, .feature-icon:active { opacity: 1; transform: none; }
+        .settings-cog:active, .feature-icon:active { opacity: 1; transform: scale(0.96); }
 
         .messages-wrapper {
             flex: 1;
@@ -317,18 +317,18 @@
             cursor: pointer;
             padding: 6px;
             border-radius: 50%;
+            transition: 0.1s;
             opacity: 0.7;
             min-width: 36px;
             min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: none;
         }
         
         .tool-icon:active {
             opacity: 1;
-            transform: none;
+            transform: scale(0.95);
         }
 
         .input-wrapper {
@@ -362,13 +362,13 @@
             font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: none;
+            transition: 0.15s;
             min-height: 40px;
             white-space: nowrap;
         }
         
         .input-wrapper button:active {
-            transform: none;
+            transform: scale(0.97);
             background: #e2e8f0;
         }
 
@@ -399,10 +399,10 @@
             padding: 6px 14px;
             cursor: pointer;
             font-weight: 500;
-            transition: none;
+            transition: 0.1s;
             white-space: nowrap;
         }
-        .back-btn:active { transform: none; background: #e4e8ef; }
+        .back-btn:active { transform: scale(0.96); background: #e4e8ef; }
         .feature-header h2 {
             font-size: 1.1rem;
             font-weight: 520;
@@ -480,7 +480,7 @@
             font-weight: 500;
             font-size: 0.85rem;
             cursor: pointer;
-            transition: none;
+            transition: 0.1s;
             min-width: 85px;
             min-height: 40px;
         }
@@ -489,7 +489,7 @@
             color: #1e2a3e;
             border: 1px solid #cbd5e1;
         }
-        .tomato-btn:active { transform: none; }
+        .tomato-btn:active { transform: scale(0.96); }
         .status-text {
             font-size: 0.8rem;
             color: #5b6e8c;
@@ -547,17 +547,13 @@
         label { font-size: 0.75rem; min-width: 60px; color: #4a627a; }
         input[type="color"] { width: 44px; height: 36px; border-radius: 10px; cursor: pointer; }
         input[type="range"] { width: 130px; }
-        .file-input-label { background: #eef2f6; padding: 5px 12px; border-radius: 28px; font-size: 0.7rem; cursor: pointer; display: inline-block; font-weight: 500; transition: none; }
-        .file-input-label:active { transform: none; }
+        .file-input-label { background: #eef2f6; padding: 5px 12px; border-radius: 28px; font-size: 0.7rem; cursor: pointer; display: inline-block; font-weight: 500; }
         .bg-preview { margin-top: 8px; max-width: 100%; max-height: 80px; overflow: hidden; }
         .bg-preview img { max-width: 100%; max-height: 80px; object-fit: cover; border-radius: 10px; }
-        .remove-bg-btn { background: #ffece5; border: none; padding: 4px 12px; border-radius: 22px; font-size: 0.65rem; cursor: pointer; transition: none; }
-        .remove-bg-btn:active { transform: none; }
+        .remove-bg-btn { background: #ffece5; border: none; padding: 4px 12px; border-radius: 22px; font-size: 0.65rem; cursor: pointer; }
         input[type="file"] { display: none; }
-        .save-btn { background: #1e2a3e; color: white; border: none; padding: 10px; border-radius: 48px; font-weight: 600; margin-top: 4px; cursor: pointer; font-size: 0.9rem; transition: none; }
-        .save-btn:active { transform: none; }
-        .close-modal { background: none; border: 1px solid #e2e8f0; padding: 10px; border-radius: 48px; margin-top: 4px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: none; }
-        .close-modal:active { transform: none; }
+        .save-btn { background: #1e2a3e; color: white; border: none; padding: 10px; border-radius: 48px; font-weight: 600; margin-top: 4px; cursor: pointer; font-size: 0.9rem; }
+        .close-modal { background: none; border: 1px solid #e2e8f0; padding: 10px; border-radius: 48px; margin-top: 4px; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
         .flex-btns { display: flex; gap: 12px; }
         .danger-btn {
             background: #fff1f0;
@@ -568,10 +564,10 @@
             font-weight: 500;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: none;
+            transition: 0.1s;
             text-align: center;
         }
-        .danger-btn:active { transform: none; background: #ffe7e5; }
+        .danger-btn:active { transform: scale(0.97); background: #ffe7e5; }
         .emoji-manager { background: #fafcff; border-radius: 20px; padding: 10px; margin-top: 4px; }
         .emoji-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; max-height: 180px; overflow-y: auto; }
         .emoji-item { position: relative; display: inline-block; cursor: pointer; }
@@ -583,10 +579,8 @@
         .lexicon-preview { max-height: 130px; overflow-y: auto; padding-top: 8px; }
         .lexicon-items-list { display: flex; flex-wrap: wrap; gap: 6px; }
         .lexicon-item-tag { background: #f1f5f9; padding: 3px 10px; border-radius: 28px; font-size: 0.65rem; display: inline-flex; align-items: center; gap: 6px; }
-        .lexicon-item-tag button { background: none; border: none; cursor: pointer; font-size: 0.7rem; padding: 0 4px; color: #888; transition: none; }
-        .lexicon-item-tag button:active { transform: none; }
-        .batch-import-area button { background: #eef2f6; border: none; padding: 5px 12px; border-radius: 24px; font-size: 0.7rem; margin-right: 8px; cursor: pointer; transition: none; }
-        .batch-import-area button:active { transform: none; }
+        .lexicon-item-tag button { background: none; border: none; cursor: pointer; font-size: 0.7rem; padding: 0 4px; color: #888; }
+        .batch-import-area button { background: #eef2f6; border: none; padding: 5px 12px; border-radius: 24px; font-size: 0.7rem; margin-right: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -662,18 +656,89 @@
 
 <script>
     (function() {
-        // ---------- 存储KEY (完整保留所有原有逻辑，仅移除按钮动画) ----------
-        const STORAGE_KEYS = { 
-            SETTINGS: "eternal_chat_settings_v2", 
-            LEXICON: "eternal_chat_lexicon_v2", 
-            EMOJIS: "eternal_chat_emojis_v2", 
-            MESSAGES: "eternal_chat_messages_v2"
-        };
-        const DEFAULT_LEXICON = ["“生活原本沉闷，但跑起来就有风”","“别急，在变好”","今天的云很好看，我想拍给你看。","听首喜欢的歌吧，我陪你。","随便聊聊，什么都不想也没关系。","风很温柔，你也是。","“记得好好吃饭”","想听你分享一件小事","安心，我一直在这里。"];
-        
+        // ---------- IndexedDB 封装 (保持不变，效率优化) ----------
+        const DB_NAME = "EternalChatDB";
+        const DB_VERSION = 1;
+        let db = null;
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                if (db && db.name === DB_NAME) { resolve(db); return; }
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => { db = request.result; resolve(db); };
+                request.onupgradeneeded = (ev) => {
+                    const dbEv = ev.target.result;
+                    if (!dbEv.objectStoreNames.contains("settings")) dbEv.createObjectStore("settings", { keyPath: "id" });
+                    if (!dbEv.objectStoreNames.contains("lexicon")) dbEv.createObjectStore("lexicon", { keyPath: "id", autoIncrement: true });
+                    if (!dbEv.objectStoreNames.contains("emojis")) dbEv.createObjectStore("emojis", { keyPath: "id", autoIncrement: true });
+                    if (!dbEv.objectStoreNames.contains("messages")) dbEv.createObjectStore("messages", { keyPath: "id" });
+                };
+            });
+        }
+
+        async function getStoreData(storeName, key = null) {
+            const database = await openDB();
+            return new Promise((resolve) => {
+                const tx = database.transaction(storeName, "readonly");
+                const store = tx.objectStore(storeName);
+                let req;
+                if (key !== null) req = store.get(key);
+                else req = store.getAll();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(key !== null ? null : []);
+            });
+        }
+
+        async function putStoreData(storeName, data) {
+            const database = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = database.transaction(storeName, "readwrite");
+                const store = tx.objectStore(storeName);
+                const req = store.put(data);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+                tx.oncomplete = () => resolve();
+            });
+        }
+
+        async function clearStore(storeName) {
+            const database = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = database.transaction(storeName, "readwrite");
+                const store = tx.objectStore(storeName);
+                const req = store.clear();
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function addToStore(storeName, item) {
+            const database = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = database.transaction(storeName, "readwrite");
+                const store = tx.objectStore(storeName);
+                const req = store.add(item);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function getAllItems(storeName) {
+            const database = await openDB();
+            return new Promise((resolve) => {
+                const tx = database.transaction(storeName, "readonly");
+                const store = tx.objectStore(storeName);
+                const req = store.getAll();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve([]);
+            });
+        }
+
+        // 全局变量
         let lexicon = [], emojis = [], chatMessages = [];
         let settings = { 
-            userName: "我", contactName: "密友", 
+            id: "appSettings", userName: "我", contactName: "密友", 
             userAvatar: null, contactAvatar: null, 
             themeColor: "#ffffff", 
             myBubbleColor: "#e9eef3", myBubbleOpacity: 1, myBubbleTextColor: "#1e2a3e",
@@ -684,10 +749,38 @@
         let lastMessageTime = 0;
         const MESSAGE_INTERVAL = 2000;
         const DEFAULT_AVATAR_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238ba3bc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
-        
+        const DEFAULT_LEXICON = ["“生活原本沉闷，但跑起来就有风”","“别急，在变好”","今天的云很好看，我想拍给你看。","听首喜欢的歌吧，我陪你。","随便聊聊，什么都不想也没关系。","风很温柔，你也是。","“记得好好吃饭”","想听你分享一件小事","安心，我一直在这里。"];
+
         function removeQuotes(str) { return str ? str.replace(/["“”]/g, '') : ""; }
         function formatTime() { const d = new Date(); return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
         
+        async function persistAll() {
+            await putStoreData("settings", settings);
+            await clearStore("lexicon");
+            for (let item of lexicon) await addToStore("lexicon", { text: item });
+            await clearStore("emojis");
+            for (let em of emojis) await addToStore("emojis", { url: em });
+            await clearStore("messages");
+            for (let msg of chatMessages) await putStoreData("messages", msg);
+        }
+
+        async function loadAll() {
+            const savedSettings = await getStoreData("settings", "appSettings");
+            if (savedSettings) Object.assign(settings, savedSettings);
+            if (!settings.myBubbleTextColor) settings.myBubbleTextColor = "#1e2a3e";
+            if (!settings.contactBubbleTextColor) settings.contactBubbleTextColor = "#1e2a3e";
+            
+            const lexiconItems = await getAllItems("lexicon");
+            lexicon = lexiconItems.map(item => item.text);
+            if (!lexicon.length) lexicon = [...DEFAULT_LEXICON];
+            
+            const emojiItems = await getAllItems("emojis");
+            emojis = emojiItems.map(e => e.url);
+            
+            const msgItems = await getAllItems("messages");
+            chatMessages = msgItems.sort((a,b) => a.id - b.id);
+        }
+
         function compressImage(file, maxWidth=400, quality=0.75) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -708,33 +801,8 @@
             });
         }
         
-        function persistAll() {
-            try {
-                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-                localStorage.setItem(STORAGE_KEYS.LEXICON, JSON.stringify(lexicon));
-                localStorage.setItem(STORAGE_KEYS.EMOJIS, JSON.stringify(emojis));
-                localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(chatMessages));
-            } catch(e) { console.warn('保存失败', e); }
-        }
-        
-        function loadAll() {
-            try {
-                const savedSets = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-                if (savedSets) Object.assign(settings, JSON.parse(savedSets));
-                const savedLex = localStorage.getItem(STORAGE_KEYS.LEXICON);
-                if (savedLex && Array.isArray(JSON.parse(savedLex))) lexicon = JSON.parse(savedLex);
-                if (!lexicon.length) lexicon = [...DEFAULT_LEXICON];
-                const savedEmoji = localStorage.getItem(STORAGE_KEYS.EMOJIS);
-                if (savedEmoji && Array.isArray(JSON.parse(savedEmoji))) emojis = JSON.parse(savedEmoji);
-                const savedMsg = localStorage.getItem(STORAGE_KEYS.MESSAGES);
-                if (savedMsg && Array.isArray(JSON.parse(savedMsg))) chatMessages = JSON.parse(savedMsg);
-                if (settings.myBubbleTextColor === undefined) settings.myBubbleTextColor = "#1e2a3e";
-                if (settings.contactBubbleTextColor === undefined) settings.contactBubbleTextColor = "#1e2a3e";
-                if (settings.bgImage === undefined) settings.bgImage = null;
-            } catch(e) { lexicon = [...DEFAULT_LEXICON]; }
-        }
-        
-        function applyBubbleStyle(bubble, type) {
+        // 应用气泡样式与其余渲染逻辑与原版一致
+        function applyBubbleStyle(bubble, type) { 
             if (bubble.classList.contains('bubble-image') || bubble.classList.contains('bubble-emoji')) return;
             const bg = type === 'user' ? settings.myBubbleColor : settings.contactBubbleColor;
             const op = type === 'user' ? settings.myBubbleOpacity : settings.contactBubbleOpacity;
@@ -752,14 +820,12 @@
             avatar.src = msg.avatar || DEFAULT_AVATAR_SVG;
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
-            
             if (msg.quoteText && msg.quoteText.trim()) {
                 const quoteDiv = document.createElement('div');
                 quoteDiv.className = 'quote-badge';
                 quoteDiv.innerText = msg.quoteText;
                 contentDiv.appendChild(quoteDiv);
             }
-            
             const bubble = document.createElement('div');
             bubble.className = 'bubble';
             if (msg.isImage) {
@@ -783,7 +849,6 @@
             contentDiv.appendChild(timeSpan);
             row.appendChild(avatar);
             row.appendChild(contentDiv);
-            
             row.addEventListener('dblclick', (e) => {
                 e.stopPropagation();
                 let quoteContent = '';
@@ -812,7 +877,7 @@
             container.scrollTop = container.scrollHeight;
         }
         
-        function addMessage(content, type, isImage = false, isEmoji = false, quoteText = null) {
+        async function addMessage(content, type, isImage = false, isEmoji = false, quoteText = null) {
             const msg = {
                 id: Date.now() + Math.random(),
                 type, content, isImage, isEmoji,
@@ -821,17 +886,17 @@
                 quoteText: quoteText || null
             };
             chatMessages.push(msg);
-            persistAll();
+            await persistAll();
             const container = document.getElementById('messagesContainer');
             container.appendChild(renderMessageToDOM(msg));
             container.scrollTop = container.scrollHeight;
             return msg;
         }
         
-        function clearAllChatHistory() {
+        async function clearAllChatHistory() {
             if (confirm("⚠️ 警告：清空所有聊天记录后无法恢复！\n确定要永久删除全部消息吗？")) {
                 chatMessages = [];
-                persistAll();
+                await persistAll();
                 renderAllMessages();
                 showHint("✅ 聊天记录已全部清空");
             }
@@ -865,7 +930,7 @@
             });
         }
         
-        // 核心回复逻辑 (表情包概率18%)
+        // ----- 回复逻辑（完全保留原版性能）-----
         function getRandomTextCards() {
             if (!lexicon.length) return ["✨ 静谧时刻，添加一些字卡吧"];
             const count = Math.floor(Math.random() * 3) + 1;
@@ -899,14 +964,12 @@
         }
         
         let replyQueue = [], isReplying = false;
-        
         function processReply() {
             if (!replyQueue.length) { isReplying = false; return; }
             if (isReplying) return;
             const item = replyQueue.shift();
             isReplying = true;
             let firstDelay = item.delayFirst !== undefined ? item.delayFirst : (3000 + Math.random() * 4000);
-            
             if (item.type === 'emoji') {
                 setTimeout(() => {
                     addMessage(item.content, 'contact', false, true, item.quoteText);
@@ -970,229 +1033,58 @@
             onUserAction();
         }
         
-        // 番茄钟逻辑 (保持不变)
+        // 番茄钟逻辑（微调无延迟感）
         let timerInterval = null, remainingSeconds = 25 * 60, isTimerRunning = false;
         const timerDisplay = document.getElementById('timerDisplay');
         const minutesInput = document.getElementById('minutesInput');
         const taskInput = document.getElementById('taskInput');
         const timerStatus = document.getElementById('timerStatus');
-        
-        function updateTimerDisplay() {
-            const mins = Math.floor(remainingSeconds / 60);
-            const secs = remainingSeconds % 60;
-            timerDisplay.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        }
-        
+        function updateTimerDisplay() { const mins = Math.floor(remainingSeconds / 60); const secs = remainingSeconds % 60; timerDisplay.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`; }
         function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } isTimerRunning = false; }
-        function startTimer() {
-            if (isTimerRunning) return;
-            if (remainingSeconds <= 0) resetTimer();
-            isTimerRunning = true;
-            timerInterval = setInterval(() => {
-                if (remainingSeconds <= 0) {
-                    stopTimer();
-                    timerStatus.innerText = `✅ 专注完成！「${taskInput.value}」时间到～`;
-                } else {
-                    remainingSeconds--;
-                    updateTimerDisplay();
-                    timerStatus.innerText = `⏳ 专注中：${taskInput.value || "专注"} · ${Math.floor(remainingSeconds/60)}分${remainingSeconds%60}秒`;
-                }
-            }, 1000);
-        }
+        function startTimer() { if (isTimerRunning) return; if (remainingSeconds <= 0) resetTimer(); isTimerRunning = true; timerInterval = setInterval(() => { if (remainingSeconds <= 0) { stopTimer(); timerStatus.innerText = `✅ 专注完成！「${taskInput.value}」时间到～`; } else { remainingSeconds--; updateTimerDisplay(); timerStatus.innerText = `⏳ 专注中：${taskInput.value || "专注"} · ${Math.floor(remainingSeconds/60)}分${remainingSeconds%60}秒`; } }, 1000); }
         function pauseTimer() { stopTimer(); if (remainingSeconds > 0) timerStatus.innerText = `⏸ 已暂停 · 「${taskInput.value || "未命名"}」`; }
-        function resetTimer() {
-            stopTimer();
-            let mins = parseInt(minutesInput.value);
-            if (isNaN(mins) || mins < 1) mins = 25;
-            remainingSeconds = mins * 60;
-            updateTimerDisplay();
-            timerStatus.innerText = `重置为 ${mins} 分钟 · 「${taskInput.value || "无"}」待开始`;
-        }
+        function resetTimer() { stopTimer(); let mins = parseInt(minutesInput.value); if (isNaN(mins) || mins < 1) mins = 25; remainingSeconds = mins * 60; updateTimerDisplay(); timerStatus.innerText = `重置为 ${mins} 分钟 · 「${taskInput.value || "无"}」待开始`; }
         
-        // 事件绑定 (所有按钮均无transform动画)
-        document.getElementById('sendBtn').onclick = sendUserText;
-        document.getElementById('messageInput').onkeypress = (e) => { if (e.key === 'Enter') sendUserText(); };
-        document.getElementById('sendImageBtn').onclick = async () => {
-            if (!canSendMessage()) return;
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = async (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const compressed = await compressImage(file, 450, 0.7);
-                    if (compressed) { addMessage(compressed, 'user', true, false, null); onUserAction(); }
-                }
-            };
-            input.click();
-        };
-        
-        document.getElementById('sendEmojiBtn').onclick = () => {
-            if (!canSendMessage()) return;
-            if (!emojis.length) { alert('请先在设置中添加表情包'); return; }
-            const overlay = document.createElement('div');
-            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center;';
-            const panel = document.createElement('div');
-            panel.style.cssText = 'background:#fff;border-radius:24px;padding:16px;max-width:320px;max-height:65vh;overflow-y:auto;';
-            panel.innerHTML = '<h4 style="margin-bottom:12px;">选择表情包</h4><div style="display:flex;flex-wrap:wrap;gap:10px;"></div><button style="margin-top:12px;padding:6px 16px;background:#eef2f6;border:none;border-radius:28px;">取消</button>';
-            const grid = panel.querySelector('div');
-            emojis.forEach(emoji => {
-                const img = document.createElement('img');
-                img.src = emoji;
-                img.style.cssText = 'width:58px;height:58px;border-radius:12px;cursor:pointer;object-fit:cover;';
-                img.onclick = () => { addMessage(emoji, 'user', false, true, null); onUserAction(); document.body.removeChild(overlay); };
-                grid.appendChild(img);
-            });
-            panel.querySelector('button').onclick = () => document.body.removeChild(overlay);
-            overlay.appendChild(panel);
-            document.body.appendChild(overlay);
-        };
-        
-        // 设置面板逻辑 (完整保留)
-        const modal = document.getElementById('settingsModal');
-        document.getElementById('openSettingsBtn').onclick = () => {
-            document.getElementById('setUserName').value = settings.userName;
-            document.getElementById('setContactName').value = settings.contactName;
-            document.getElementById('themeColorPicker').value = settings.themeColor;
-            document.getElementById('myBubbleColor').value = settings.myBubbleColor;
-            document.getElementById('myBubbleOpacity').value = settings.myBubbleOpacity;
-            document.getElementById('myBubbleTextColor').value = settings.myBubbleTextColor;
-            document.getElementById('contactBubbleColor').value = settings.contactBubbleColor;
-            document.getElementById('contactBubbleOpacity').value = settings.contactBubbleOpacity;
-            document.getElementById('contactBubbleTextColor').value = settings.contactBubbleTextColor;
-            document.getElementById('myOpacityVal').innerText = Math.round(settings.myBubbleOpacity * 100) + '%';
-            document.getElementById('contactOpacityVal').innerText = Math.round(settings.contactBubbleOpacity * 100) + '%';
-            document.getElementById('bgPreview').innerHTML = settings.bgImage ? `<img src="${settings.bgImage}">` : '<div>未设置背景</div>';
-            renderEmojiUI();
-            renderLexiconUI();
-            modal.classList.add('open');
-        };
-        document.getElementById('closeSettingsBtn').onclick = () => modal.classList.remove('open');
-        document.getElementById('saveSettingsBtn').onclick = () => {
-            settings.userName = document.getElementById('setUserName').value.trim() || "我";
-            settings.contactName = document.getElementById('setContactName').value.trim() || "密友";
-            settings.themeColor = document.getElementById('themeColorPicker').value;
-            settings.myBubbleColor = document.getElementById('myBubbleColor').value;
-            settings.myBubbleOpacity = parseFloat(document.getElementById('myBubbleOpacity').value);
-            settings.myBubbleTextColor = document.getElementById('myBubbleTextColor').value;
-            settings.contactBubbleColor = document.getElementById('contactBubbleColor').value;
-            settings.contactBubbleOpacity = parseFloat(document.getElementById('contactBubbleOpacity').value);
-            settings.contactBubbleTextColor = document.getElementById('contactBubbleTextColor').value;
-            persistAll();
+        // 事件挂载（所有事件均无阻塞，按钮反馈即按即响应）
+        window.onload = async () => {
+            await loadAll();
+            applyBg();
             refreshUserInfo();
             applyThemeAndBubbles();
-            modal.classList.remove('open');
-            alert("所有个性化已永久保存✨");
+            renderAllMessages();
+            function renderEmojiUI() { const grid = document.getElementById('emojiGrid'); grid.innerHTML = ''; if (!emojis.length) { grid.innerHTML = '<div style="color:#aaa;padding:8px;">✨ 暂无表情包</div>'; return; } emojis.forEach((e, idx) => { const div = document.createElement('div'); div.className = 'emoji-item'; div.innerHTML = `<img src="${e}"><div class="delete-emoji" data-idx="${idx}">✕</div>`; div.querySelector('.delete-emoji').onclick = async (ev) => { ev.stopPropagation(); emojis.splice(idx, 1); await persistAll(); renderEmojiUI(); }; grid.appendChild(div); }); }
+            function renderLexiconUI() { document.getElementById('lexiconCount').innerText = lexicon.length; const list = document.getElementById('lexiconItemsList'); list.innerHTML = ''; if (!lexicon.length) { list.innerHTML = '<div style="color:#aaa;">暂无字卡</div>'; return; } lexicon.forEach((item, idx) => { const tag = document.createElement('div'); tag.className = 'lexicon-item-tag'; const short = removeQuotes(item).length > 24 ? removeQuotes(item).slice(0,24)+'…' : removeQuotes(item); tag.innerHTML = `<span title="${escapeHtml(item)}">${escapeHtml(short)}</span><button data-idx="${idx}">✕</button>`; list.appendChild(tag); }); document.querySelectorAll('#lexiconItemsList button').forEach(btn => { btn.onclick = async () => { const idx = parseInt(btn.getAttribute('data-idx')); if (!isNaN(idx)) { lexicon.splice(idx, 1); await persistAll(); renderLexiconUI(); } }; }); }
+            function escapeHtml(s) { return s.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+            renderEmojiUI(); renderLexiconUI();
+            document.getElementById('sendBtn').onclick = () => { sendUserText(); };
+            document.getElementById('messageInput').onkeypress = (e) => { if (e.key === 'Enter') sendUserText(); };
+            document.getElementById('sendImageBtn').onclick = async () => { if (!canSendMessage()) return; const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.onchange = async (e) => { const file = e.target.files[0]; if (file) { const compressed = await compressImage(file, 450, 0.7); if (compressed) { addMessage(compressed, 'user', true, false, null); onUserAction(); } } }; input.click(); };
+            document.getElementById('sendEmojiBtn').onclick = () => { if (!canSendMessage()) return; if (!emojis.length) { alert('请先在设置中添加表情包'); return; } const overlay = document.createElement('div'); overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center;'; const panel = document.createElement('div'); panel.style.cssText = 'background:#fff;border-radius:24px;padding:16px;max-width:320px;max-height:65vh;overflow-y:auto;'; panel.innerHTML = '<h4 style="margin-bottom:12px;">选择表情包</h4><div style="display:flex;flex-wrap:wrap;gap:10px;"></div><button style="margin-top:12px;padding:6px 16px;background:#eef2f6;border:none;border-radius:28px;">取消</button>'; const grid = panel.querySelector('div'); emojis.forEach(emoji => { const img = document.createElement('img'); img.src = emoji; img.style.cssText = 'width:58px;height:58px;border-radius:12px;cursor:pointer;object-fit:cover;'; img.onclick = () => { addMessage(emoji, 'user', false, true, null); onUserAction(); document.body.removeChild(overlay); }; grid.appendChild(img); }); panel.querySelector('button').onclick = () => document.body.removeChild(overlay); overlay.appendChild(panel); document.body.appendChild(overlay); };
+            const modal = document.getElementById('settingsModal');
+            document.getElementById('openSettingsBtn').onclick = () => { document.getElementById('setUserName').value = settings.userName; document.getElementById('setContactName').value = settings.contactName; document.getElementById('themeColorPicker').value = settings.themeColor; document.getElementById('myBubbleColor').value = settings.myBubbleColor; document.getElementById('myBubbleOpacity').value = settings.myBubbleOpacity; document.getElementById('myBubbleTextColor').value = settings.myBubbleTextColor; document.getElementById('contactBubbleColor').value = settings.contactBubbleColor; document.getElementById('contactBubbleOpacity').value = settings.contactBubbleOpacity; document.getElementById('contactBubbleTextColor').value = settings.contactBubbleTextColor; document.getElementById('myOpacityVal').innerText = Math.round(settings.myBubbleOpacity * 100) + '%'; document.getElementById('contactOpacityVal').innerText = Math.round(settings.contactBubbleOpacity * 100) + '%'; document.getElementById('bgPreview').innerHTML = settings.bgImage ? `<img src="${settings.bgImage}">` : '<div>未设置背景</div>'; renderEmojiUI(); renderLexiconUI(); modal.classList.add('open'); };
+            document.getElementById('closeSettingsBtn').onclick = () => modal.classList.remove('open');
+            document.getElementById('saveSettingsBtn').onclick = async () => { settings.userName = document.getElementById('setUserName').value.trim() || "我"; settings.contactName = document.getElementById('setContactName').value.trim() || "密友"; settings.themeColor = document.getElementById('themeColorPicker').value; settings.myBubbleColor = document.getElementById('myBubbleColor').value; settings.myBubbleOpacity = parseFloat(document.getElementById('myBubbleOpacity').value); settings.myBubbleTextColor = document.getElementById('myBubbleTextColor').value; settings.contactBubbleColor = document.getElementById('contactBubbleColor').value; settings.contactBubbleOpacity = parseFloat(document.getElementById('contactBubbleOpacity').value); settings.contactBubbleTextColor = document.getElementById('contactBubbleTextColor').value; await persistAll(); refreshUserInfo(); applyThemeAndBubbles(); modal.classList.remove('open'); alert("所有个性化已永久保存✨"); };
+            document.getElementById('clearAllMessagesBtn').onclick = clearAllChatHistory;
+            document.getElementById('userAvatarUpload').onchange = async e => { if(e.target.files[0]){ const compressed = await compressImage(e.target.files[0], 180, 0.7); if(compressed){ settings.userAvatar = compressed; await persistAll(); refreshUserInfo(); } } e.target.value = ''; };
+            document.getElementById('contactAvatarUpload').onchange = async e => { if(e.target.files[0]){ const compressed = await compressImage(e.target.files[0], 180, 0.7); if(compressed){ settings.contactAvatar = compressed; await persistAll(); refreshUserInfo(); } } e.target.value = ''; };
+            document.getElementById('bgImageUpload').onchange = async e => { if(e.target.files[0]){ const compressed = await compressImage(e.target.files[0], 1000, 0.7); if(compressed){ settings.bgImage = compressed; applyBg(); await persistAll(); document.getElementById('bgPreview').innerHTML = `<img src="${compressed}">`; } } e.target.value = ''; };
+            document.getElementById('removeBgBtn').onclick = async () => { settings.bgImage = null; applyBg(); await persistAll(); document.getElementById('bgPreview').innerHTML = '<div>未设置背景</div>'; };
+            document.getElementById('myBubbleOpacity').oninput = () => document.getElementById('myOpacityVal').innerText = Math.round(document.getElementById('myBubbleOpacity').value * 100) + '%';
+            document.getElementById('contactBubbleOpacity').oninput = () => document.getElementById('contactOpacityVal').innerText = Math.round(document.getElementById('contactBubbleOpacity').value * 100) + '%';
+            document.getElementById('addEmojiInput').onchange = async e => { const files = Array.from(e.target.files); for (let f of files) { if (f.type.startsWith('image/')) { const compressed = await compressImage(f, 160, 0.85); if (compressed && !emojis.includes(compressed)) emojis.push(compressed); } } await persistAll(); renderEmojiUI(); alert('表情包已更新'); e.target.value = ''; };
+            document.getElementById('batchImportBtn').onclick = async () => { const text = document.getElementById('batchLexiconInput').value; if (!text.trim()) return; const lines = text.split(/\r?\n/); let added = 0; lines.forEach(l => { const t = l.trim(); if (t && !lexicon.includes(t)) { lexicon.push(t); added++; } }); if (added) { await persistAll(); renderLexiconUI(); document.getElementById('batchLexiconInput').value = ''; alert(`成功添加 ${added} 条字卡`); } else alert('没有新增'); };
+            document.getElementById('clearAllLexiconBtn').onclick = async () => { if (confirm('永久删除所有字卡？')) { lexicon = []; await persistAll(); renderLexiconUI(); } };
+            document.getElementById('startTimerBtn').onclick = startTimer;
+            document.getElementById('pauseTimerBtn').onclick = pauseTimer;
+            document.getElementById('resetTimerBtn').onclick = resetTimer;
+            minutesInput.onchange = () => { if (!isTimerRunning) resetTimer(); };
+            const chatView = document.getElementById('chatView'), featureView = document.getElementById('featureView');
+            document.getElementById('openFeatureBtn').onclick = () => { chatView.classList.add('hidden'); featureView.classList.remove('hidden'); stopTimer(); resetTimer(); };
+            document.getElementById('backToChatBtn').onclick = () => { featureView.classList.add('hidden'); chatView.classList.remove('hidden'); stopTimer(); };
+            if (chatMessages.length === 0) { setTimeout(() => addMessage("这里只属于我们。所有设置都会永久保存✨", 'contact'), 400); setTimeout(() => addMessage("双击消息可引用，我每次会从字卡库随机回复1~3条，间隔2秒，首条延迟3~7秒。表情包概率18% ✨", 'contact'), 1800); }
+            lastMessageTime = Date.now();
+            window.pendingQuote = null;
         };
-        document.getElementById('clearAllMessagesBtn').onclick = clearAllChatHistory;
-        
-        async function handleAvatar(file, isUser) {
-            if (!file) return;
-            const compressed = await compressImage(file, 180, 0.7);
-            if (compressed) {
-                if (isUser) settings.userAvatar = compressed;
-                else settings.contactAvatar = compressed;
-                persistAll();
-                refreshUserInfo();
-            }
-        }
-        document.getElementById('userAvatarUpload').onchange = e => { handleAvatar(e.target.files[0], true); e.target.value = ''; };
-        document.getElementById('contactAvatarUpload').onchange = e => { handleAvatar(e.target.files[0], false); e.target.value = ''; };
-        document.getElementById('bgImageUpload').onchange = async e => {
-            if (e.target.files[0]) {
-                const compressed = await compressImage(e.target.files[0], 1000, 0.7);
-                if (compressed) { settings.bgImage = compressed; applyBg(); persistAll(); document.getElementById('bgPreview').innerHTML = `<img src="${compressed}">`; }
-            }
-            e.target.value = '';
-        };
-        document.getElementById('removeBgBtn').onclick = () => { settings.bgImage = null; applyBg(); persistAll(); document.getElementById('bgPreview').innerHTML = '<div>未设置背景</div>'; };
-        document.getElementById('myBubbleOpacity').oninput = () => document.getElementById('myOpacityVal').innerText = Math.round(document.getElementById('myBubbleOpacity').value * 100) + '%';
-        document.getElementById('contactBubbleOpacity').oninput = () => document.getElementById('contactOpacityVal').innerText = Math.round(document.getElementById('contactBubbleOpacity').value * 100) + '%';
-        
-        function renderEmojiUI() {
-            const grid = document.getElementById('emojiGrid');
-            grid.innerHTML = '';
-            if (!emojis.length) { grid.innerHTML = '<div style="color:#aaa;padding:8px;">✨ 暂无表情包</div>'; return; }
-            emojis.forEach((e, idx) => {
-                const div = document.createElement('div');
-                div.className = 'emoji-item';
-                div.innerHTML = `<img src="${e}"><div class="delete-emoji" data-idx="${idx}">✕</div>`;
-                div.querySelector('.delete-emoji').onclick = (ev) => { ev.stopPropagation(); emojis.splice(idx, 1); persistAll(); renderEmojiUI(); };
-                grid.appendChild(div);
-            });
-        }
-        document.getElementById('addEmojiInput').onchange = async e => {
-            const files = Array.from(e.target.files);
-            for (let f of files) {
-                if (f.type.startsWith('image/')) {
-                    const compressed = await compressImage(f, 160, 0.85);
-                    if (compressed && !emojis.includes(compressed)) emojis.push(compressed);
-                }
-            }
-            persistAll();
-            renderEmojiUI();
-            alert('表情包已更新');
-            e.target.value = '';
-        };
-        
-        function renderLexiconUI() {
-            document.getElementById('lexiconCount').innerText = lexicon.length;
-            const list = document.getElementById('lexiconItemsList');
-            list.innerHTML = '';
-            if (!lexicon.length) { list.innerHTML = '<div style="color:#aaa;">暂无字卡</div>'; return; }
-            lexicon.forEach((item, idx) => {
-                const tag = document.createElement('div');
-                tag.className = 'lexicon-item-tag';
-                const short = removeQuotes(item).length > 24 ? removeQuotes(item).slice(0,24)+'…' : removeQuotes(item);
-                tag.innerHTML = `<span title="${escapeHtml(item)}">${escapeHtml(short)}</span><button data-idx="${idx}">✕</button>`;
-                list.appendChild(tag);
-            });
-            document.querySelectorAll('#lexiconItemsList button').forEach(btn => {
-                btn.onclick = () => {
-                    const idx = parseInt(btn.getAttribute('data-idx'));
-                    if (!isNaN(idx)) { lexicon.splice(idx, 1); persistAll(); renderLexiconUI(); }
-                };
-            });
-        }
-        function escapeHtml(s) { return s.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
-        document.getElementById('batchImportBtn').onclick = () => {
-            const text = document.getElementById('batchLexiconInput').value;
-            if (!text.trim()) return;
-            const lines = text.split(/\r?\n/);
-            let added = 0;
-            lines.forEach(l => { const t = l.trim(); if (t && !lexicon.includes(t)) { lexicon.push(t); added++; } });
-            if (added) { persistAll(); renderLexiconUI(); document.getElementById('batchLexiconInput').value = ''; alert(`成功添加 ${added} 条字卡`); }
-            else alert('没有新增');
-        };
-        document.getElementById('clearAllLexiconBtn').onclick = () => { if (confirm('永久删除所有字卡？')) { lexicon = []; persistAll(); renderLexiconUI(); } };
-        
-        document.getElementById('startTimerBtn').onclick = startTimer;
-        document.getElementById('pauseTimerBtn').onclick = pauseTimer;
-        document.getElementById('resetTimerBtn').onclick = resetTimer;
-        minutesInput.onchange = () => { if (!isTimerRunning) resetTimer(); };
-        
-        const chatView = document.getElementById('chatView'), featureView = document.getElementById('featureView');
-        document.getElementById('openFeatureBtn').onclick = () => { chatView.classList.add('hidden'); featureView.classList.remove('hidden'); stopTimer(); resetTimer(); };
-        document.getElementById('backToChatBtn').onclick = () => { featureView.classList.add('hidden'); chatView.classList.remove('hidden'); stopTimer(); };
-        
-        function initWelcome() {
-            if (chatMessages.length === 0) {
-                setTimeout(() => addMessage("这里只属于我们。所有设置都会永久保存✨", 'contact'), 400);
-                setTimeout(() => addMessage("双击消息可引用，我每次会从字卡库随机回复1~3条，间隔2秒，首条延迟3~7秒。表情包概率18% ✨", 'contact'), 1800);
-            }
-        }
-        
-        loadAll();
-        applyBg();
-        refreshUserInfo();
-        applyThemeAndBubbles();
-        renderAllMessages();
-        renderLexiconUI();
-        renderEmojiUI();
-        initWelcome();
-        lastMessageTime = Date.now();
-        window.pendingQuote = null;
-        window.addEventListener('beforeunload', () => persistAll());
     })();
 </script>
 </body>
